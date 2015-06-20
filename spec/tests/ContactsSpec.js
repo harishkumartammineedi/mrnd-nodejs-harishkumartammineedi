@@ -1,9 +1,9 @@
-
+var idCreated;
 describe("Contacts Test Suite", function(){
 
 	//var request = require('request');
 	var request = require('C:/Program Files/nodejs/node_modules/npm/node_modules/request')
-	var base_url = "http://mycontactsvc.com:3000";
+	var base_url = "http://localhost:3000";
 	var contacts_url = base_url + "/contacts";
 
 	describe("hello world", function(){
@@ -22,7 +22,6 @@ describe("Contacts Test Suite", function(){
 	});
 
 	describe("create update contact", function(){
-		var idCreated;
 
 		it("should create contact",function(done){
 
@@ -40,7 +39,7 @@ describe("Contacts Test Suite", function(){
 		    		    function(error, response, body){
 
 							expect(response.statusCode).toBe(200);
-							console.log(body);
+							//console.log(body);
 							idCreated = body;
 							done();
 					    });
@@ -55,7 +54,7 @@ describe("Contacts Test Suite", function(){
 		    		    function(error, response, body){
 
 							expect(response.statusCode).toBe(200);
-							console.log(body);
+							//console.log(body);
 							expect(body.firstName).toBe("jagan");
 							done();
 					    });
@@ -72,28 +71,51 @@ describe("Contacts Test Suite", function(){
 		    		    function(error, response, body){
 
 							expect(response.statusCode).toBe(200);
-							console.log(body);
+							//console.log(body);
 							expect(body.firstName).toBe("jagan-updated");
 							expect(body.phone).toBe("23002300");
 							done();
 					    });
 		});
 	});
-
 	//TODO: Fill out the test case below that posts a message to a contact
 	// and retrieves it back.
 	describe("post and get message to contact", function(){
-
+			var msg_id;
+			var cid='0';
 		it("should post message to contact", function(done){
+			
 			//TODO: Write your test case here.
-			done();
-
+			var cmessage=new Object();
+			cmessage.msg="hello";
+			console.log(JSON.stringify(cmessage));
+			request.post({
+							url:contacts_url+"/"+idCreated.toString()+"/message",
+							body:cmessage,
+							json:true
+						},
+						function(error,response,body){
+							expect(response.statusCode).toBe(200);
+							//console.log(body);
+							msg_id=body;
+							//console.log(msgld);
+							done();
+						});
 		});
 
 		it("should get message for contact", function(done){
 			//TODO: Write your test case here.
-			done();
-
+			console.log(contacts_url+"/"+idCreated.toString()+"/message"+"/"+msg_id);
+			request.get({
+							url:contacts_url+"/"+idCreated.toString()+"/message"+"/"+msg_id,
+							json:true
+						},
+						function(error,response,body){
+					
+							expect(response.statusCode).toBe(200);
+							expect(body).toBe("hello");
+							done();
+						});
 		});
 
 	});

@@ -1,22 +1,21 @@
 // This test case is trying to hit an invalid URL.
 // Fix the assertions below so they all pass.
 describe("HttpIntro Test Suite", function(){
-	var request = require('request');
-	// var request = require('C:/Program Files/nodejs/node_modules/npm/node_modules/request');
+	//var request = require('request');
+	var request = require('C:/Program Files/nodejs/node_modules/npm/node_modules/request');
 	jasmine.getEnv().defaultTimeoutInterval = 5000;
 
 	it("IDontKnowBill_Gates",function(done){
     
     	request.get(
-    		{url: "http://en.wikipedia.org/wiki/IDontKnowBill_Gates",
-    		proxy: "http://10.4.8.204:8080",
-    		 timeout: 5000}, 
+    		{url: "http://en.wikipedia.org/wiki/IDontKnowBill_Gates",proxy: "http://10.4.8.204:8080",
+    		 timeout: 10000}, 
     		 function(error, response, body){
 
 			// console.log(response);
-			expect(response.statusCode).toBe(200);
-			expect(response.statusMessage).toBe('OK');
-			expect(response.headers["content-type"]).toBe("text/html");
+			expect(response.statusCode).toBe(404);
+			expect(response.statusMessage).toBe('Not Found');
+			expect(response.headers["content-type"]).toBe("text/html; charset=UTF-8");
 
 			done();
     	});
@@ -27,15 +26,14 @@ describe("HttpIntro Test Suite", function(){
 	 it("Twitter",function(done){
 	    
 	    	request.get(
-	    		{url: "https://api.twitter.com/1.1/friends/list.json",
-	    		proxy: "http://10.4.8.204:8080",
+	    		{url: "https://api.twitter.com/1.1/friends/list.json",proxy: "http://10.4.8.204:8080",
 	    		 timeout: 30000}, 
 	    		 function(error, response, body){
 
 				// console.log(response);
-				expect(response.statusCode).toBe(404);
-				expect(response.statusMessage).toBe('Not Found');
-				expect(response.headers["content-type"]).toBe("text/html; charset=UTF-8");
+				expect(response.statusCode).toBe(400);
+				expect(response.statusMessage).toBe('Bad Request');
+				expect(response.headers["content-type"]).toBe("application/json; charset=UTF-8");
 
 				done();
 	    });
@@ -46,15 +44,14 @@ describe("HttpIntro Test Suite", function(){
 	 it("Weather",function(done){
 	    
 	    	request.get(
-	    		{url: "http://api.openweathermap.org/data/2.5/weather?q=jaganperi",
-	    		proxy: "http://10.4.8.204:8080",
+	    		{url: "http://api.openweathermap.org/data/2.5/weather?q=jaganperi",proxy: "http://10.4.8.204:8080",
 	    		 timeout: 30000}, 
 	    		 function(error, response, body){
 
-				// console.log(response);
-				expect(response.statusCode).toBe(404);
-				expect(response.statusMessage).toBe('Not Found');
-				expect(response.headers["content-type"]).toBe("text/html; charset=UTF-8");
+				console.log(response);
+				expect(response.statusCode).toBe(200);
+				expect(response.statusMessage).toBe('OK');
+				expect(response.headers["content-type"]).toBe("application/json; charset=UTF-8");
 
 				done();
 	    });
@@ -66,10 +63,9 @@ describe("HttpIntro Test Suite", function(){
 	 it("Weather-json",function(done){
 	    
 	    	request.get(
-	    		{url: "http://api.openweathermap.org/data/2.5/weather?q=hyderabad",
-	    		proxy: "http://10.4.8.204:8080",
+	    		{url: "http://api.openweathermap.org/data/2.5/weather?q=hyderabad",proxy: "http://10.4.8.204:8080",
 	    		 timeout: 30000,
-	    		  json: false}, 
+	    		  json: true}, 
 	    		 function(error, response, body){
 
 				//console.log(response);
@@ -82,15 +78,19 @@ describe("HttpIntro Test Suite", function(){
 	 it("Weather-xml",function(done){
 	    
 	    	request.get(
-	    		{url: "http://api.openweathermap.org/data/2.5/weather?q=hyderabad&mode=xml",
-	    		proxy: "http://10.4.8.204:8080",
+	    		{url: "http://api.openweathermap.org/data/2.5/weather?q=hyderabad&mode=xml",proxy: "http://10.4.8.204:8080",
 	    		 timeout: 30000,
-	    		  json: true}, 
+	    		  json: false}, 
 	    		 function(error, response, body){
+	    		 	xml2js = require('C:\\Program Files\\nodejs\\node_modules\\npm\\node_modules\\xml2js');
+				var obj = new xml2js.Parser();
+				obj.parseString(body, function(err, result){
+					expect(result.current.city[0].country[0]).toBe("IN");
 
-				// console.log(response);
+				console.log(response);
+				console.log(body.sys.country);
 				//expect(body.sys.country).toBe("IN");
-
+	            });
 				done();
 		    });
 	});
